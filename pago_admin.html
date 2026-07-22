@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; padding: 15px; margin: 0; }
+        .card { background: #1e293b; padding: 18px; border-radius: 22px; margin-bottom: 20px; border: 1px solid #334155; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .tag { background: #3b82f6; font-size: 10px; padding: 3px 10px; border-radius: 6px; font-weight: bold; text-transform: uppercase; }
+        h3 { color: #f8fafc; margin-bottom: 20px; text-align: center; }
+        label { font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: bold; margin-top: 12px; display: block; }
+        input, select, textarea { width: 100%; background: #0f172a; border: 1px solid #475569; color: #10b981; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 15px; margin-top: 4px; box-sizing: border-box; outline: none; font-family: inherit; }
+        
+        .obs-box { background: #334155; padding: 10px; border-radius: 10px; margin-top: 10px; border-left: 4px solid #3b82f6; }
+        .obs-text { font-size: 13px; color: #cbd5e1; font-style: italic; }
+
+        .img-container { margin-top: 15px; border-radius: 12px; overflow: hidden; border: 1px solid #475569; background: #0f172a; }
+        .img-preview { width: 100%; display: block; max-height: 350px; object-fit: contain; cursor: zoom-in; }
+
+        .force-box { background: #312e81; padding: 12px; border-radius: 12px; margin-top: 15px; border: 1px solid #4338ca; }
+        .force-label { display: flex; align-items: center; cursor: pointer; color: #e0e7ff; font-size: 13px; font-weight: bold; }
+        .force-checkbox { width: 22px; height: 22px; margin-right: 12px; cursor: pointer; accent-color: #ef4444; }
+
+        .btn-ok { background: #10b981; color: white; border: none; padding: 15px; width: 68%; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-del { background: #ef4444; color: white; border: none; padding: 15px; width: 28%; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        
+        #main-view { display: block; }
+        #success-view { display: none; text-align: center; background: #1e293b; padding: 40px 20px; border-radius: 25px; border: 2px solid #10b981; max-width: 400px; margin: 20px auto; }
+        .btn-pdf { display: block; background: #2563eb; color: white; padding: 20px; border-radius: 15px; text-decoration: none; margin-top: 20px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 15px rgba(37,99,235,0.4); }
+    </style>
+</head>
+<body>
+
+    <div id="main-view">
+        <h3>Panel de Revisión</h3>
+        <div id="lista">Buscando pagos pendientes...</div>
+    </div>
+
+    <div id="success-view">
+        <div style="font-size:60px;">📄</div>
+        <h2 style="color:#10b981;">PAGO APROBADO</h2>
+        <p style="color:#94a3b8;">El registro es oficial y el recibo está listo.</p>
+        <a id="link-recibo" href="#" target="_blank" class="btn-pdf">📥 ABRIR RECIBO (PDF)</a>
+        <br>
+        <button onclick="location.reload()" style="background:none; border:none; color:#64748b; text-decoration:underline; cursor:pointer; margin-top:10px;">Volver a la lista</button>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const SCRIPT_URL = params.get('url') || "https://script.google.com/macros/s/AKfycbxLZiJSsy2_LKkgBrgK0OxJhQhykTdjOiBfECXIzZkdq4m5JkSeY5_tJvbpLn9pWfHW/exec"; 
+
+        function convertirLinkDrive(url) {
+            if (!url) return "";
+            if (url.includes('data:image')) return url;
+            const idMatch = url.match(/[-\w]{25,}/);
+            if (idMatch) {
+                return `https://drive.google.com/thumbnail?id=${idMatch[0]}&sz=w1000`;
+            }
+            return url;
+        }
+
+        async function cargar() {
+            const cont = document.getElementById('lista');
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=listarPendientes`);
+                const lista = await response.json();
+                
+                if (lista.length === 0) {
+                    cont.innerHTML = "<p style='text-align:center; color:#64748b; margin-top:50px;'>No hay pagos pendientes de aprobación.</p>";
+                    return;
+                }
+
+                cont.innerHTML = "";
+                lista.forEach(p => {
+                    const fISO = p.fecha.split('/').reverse().join('-');
+                    const driveDirecto = convertirLinkDrive(p.url_imagen);
+                    
+                    const div = document.createElement('div');
+                    div.className = "card";
+                    div.innerHTML = `
+                        <span class="tag">Asesor: ${p.asesor}</span>
+                        <b style="color:#60a5fa; font-size:17px; display:block; margin-top:10px;">${p.nombre}</b>
+                        
+                        <div class="img-container">
+                            <img src="${driveDirecto}" class="img-preview" alt="Comprobante" onclick="window.open('${p.url_imagen}', '_blank')">
+                        </div>
+
+                        <div style="display:flex; gap:10px;">
+                            <div style="flex:1"><label>Monto</label><input type="number" id="m_${p.fila}" value="${p.monto}" step="0.01"></div>
+                            <div style="flex:1"><label>Fecha</label><input type="date" id="f_${p.fila}" value="${fISO}"></div>
+                        </div>
+
+                        <div style="display:flex; gap:10px;">
+                            <div style="flex:1">
+                                <label>Tipo de Abono</label>
+                                <select id="t_${p.fila}">
+                                    <option value="pago de cuota" ${p.tipo_abono==='pago de cuota'?'selected':''}>Cuota Mensual</option>
+                                    <option value="abono a capital" ${p.tipo_abono==='abono a capital'?'selected':''}>Abono a Capital</option>
+                                </select>
+                            </div>
+                            <div style="flex:1">
+                                <label>Método</label>
+                                <select id="metodo_${p.fila}">
+                                    <option value="Transferencia" ${p.metodo_pago==='Transferencia'?'selected':''}>Transferencia</option>
+                                    <option value="Efectivo" ${p.metodo_pago==='Efectivo'?'selected':''}>Efectivo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="obs-box">
+                            <label style="margin-top:0; color:#3b82f6;">Observación del Asesor:</label>
+                            <div class="obs-text">${p.observacion || "Sin comentarios adicionales."}</div>
+                        </div>
+
+                        <div class="force-box">
+                            <label class="force-label">
+                                <input type="checkbox" id="forzado_${p.fila}" class="force-checkbox">
+                                ⚠️ REGISTRO FORZADO (Ignorar mora/cuota)
+                            </label>
+                        </div>
+
+                        <div style="font-size:11px; margin-top:12px; color:#94a3b8; text-align:center;">
+                            📍 Polígono ${p.poligono} - Lote ${p.lote} | ID: ${p.cliente_id}
+                        </div>
+
+                        <div style="margin-top:20px; display:flex; justify-content:space-between;">
+                            <button class="btn-del" onclick="rechazar(${p.fila})">BORRAR</button>
+                            <button class="btn-ok" onclick="aprobar(${p.fila},'${p.cliente_id}','${p.url_imagen}')">APROBAR PAGO</button>
+                        </div>
+                    `;
+                    cont.appendChild(div);
+                });
+            } catch(e) { cont.innerHTML = "Error de conexión."; }
+        }
+
+        async function aprobar(fila, id, urlImg) {
+            const btn = event.target;
+            const isForzado = document.getElementById(`forzado_${fila}`).checked;
+            
+            btn.innerText = "⏳ PROCESANDO...";
+            btn.disabled = true;
+
+            const payload = {
+                action: "aprobarPago",
+                fila: fila,
+                cliente_id: id,
+                monto: document.getElementById(`m_${fila}`).value,
+                fecha: document.getElementById(`f_${fila}`).value,
+                tipo_abono: document.getElementById(`t_${fila}`).value,
+                metodo_pago: document.getElementById(`metodo_${fila}`).value,
+                registro_forzado: isForzado,
+                url_comprobante: urlImg
+            };
+
+            try {
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const res = await response.json();
+
+                if (res.status === "success") {
+                    document.getElementById('main-view').style.display = 'none';
+                    document.getElementById('success-view').style.display = 'block';
+                    document.getElementById('link-recibo').href = res.reciboUrl;
+                } else {
+                    alert("Error: " + res.message);
+                    btn.innerText = "APROBAR PAGO";
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                alert("Error de red. Revisa si el pago se registró.");
+                location.reload();
+            }
+        }
+
+        async function rechazar(fila) {
+            if(!confirm("¿Deseas eliminar este reporte?")) return;
+            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "rechazarPago", fila: fila }) })
+            .then(() => cargar());
+        }
+
+        window.onload = cargar;
+    </script>
+</body>
+</html>
