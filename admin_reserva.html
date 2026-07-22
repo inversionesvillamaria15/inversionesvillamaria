@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Reservas | Control Administrativo</title>
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #10b981; --primary: #2563eb; --warn: #fbbf24; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; padding: 20px; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 800px; }
+        h1 { text-align: center; font-size: 24px; margin-bottom: 30px; }
+        #lista-reservas { display: grid; gap: 15px; }
+        .reserva-card { background: var(--card); border: 1px solid #334155; padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .info b { font-size: 18px; display: block; color: var(--accent); }
+        .info span { font-size: 13px; color: #94a3b8; display: block; margin-top: 4px; }
+        .tag-tiempo { display: inline-block; background: rgba(251, 191, 36, 0.1); color: var(--warn); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
+        .asesor-label { color: var(--primary); font-weight: bold; font-size: 12px; margin-top: 10px; border-top: 1px solid #334155; padding-top: 8px; }
+        .btn-confirm { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-left:10px; }
+        .btn-confirm:hover { transform: scale(1.05); background: #1d4ed8; }
+        .btn-view { background: transparent; border: 1px solid #10b981; color: #10b981; padding: 10px 15px; border-radius: 12px; cursor: pointer; text-decoration: none; font-size: 12px; font-weight: bold; }
+        .btn-view:hover { background: #10b981; color: white; }
+        .actions { display: flex; align-items: center; }
+        .loader { text-align: center; color: var(--primary); padding: 20px; display: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Reservas Pendientes</h1>
+    <div id="loader" class="loader">CONECTANDO CON EL SERVIDOR...</div>
+    <div id="lista-reservas"></div>
+</div>
+
+<script>
+   const params = new URLSearchParams(window.location.search);
+    const SCRIPT_URL = params.get('url') || "https://script.google.com/macros/s/AKfycbzj1xEY_4Ma3gJtPrwDPJvmUtRM9Pi5VTf3CMVfmtc7veb755O9JxfwNmEershMzgGu/exec";
+
+    function calcularHaceCuanto(milisegundos) {
+        if (!milisegundos) return "...";
+        const reserva = new Date(milisegundos);
+        const hoy = new Date();
+        reserva.setHours(0,0,0,0); hoy.setHours(0,0,0,0);
+        const diferencia = Math.floor((hoy - reserva) / (1000 * 60 * 60 * 24));
+        if (diferencia === 0) return "hoy mismo";
+        if (diferencia === 1) return "hace 1 día";
+        return `hace ${diferencia} días`;
+    }
+
+    async function cargarReservas() {
+        const lista = document.getElementById('lista-reservas');
+        const loader = document.getElementById('loader');
+        lista.innerHTML = "";
+        loader.style.display = "block";
+
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=obtenerReservas`);
+            const data = await res.json();
+            loader.style.display = "none";
+
+            if(data.length === 0) {
+                lista.innerHTML = "<p style='text-align:center; color:#94a3b8;'>No hay reservas en espera.</p>";
+                return;
+            }
+
+            data.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'reserva-card';
+                card.innerHTML = `
+                    <div class="info">
+                        <div class="tag-tiempo">📅 ${calcularHaceCuanto(r.fecha)}</div>
+                        <b>${r.nombre}</b>
+                        <span>Polígono ${r.pol} - Lote ${r.lot} | ID: ${r.id}</span>
+                        <div class="asesor-label">👤 Asesor: ${r.asesor || "Oficina"}</div>
+                    </div>
+                    <div class="actions">
+                        ${r.comprobante && r.comprobante.includes('http') ? `<a href="${r.comprobante}" target="_blank" class="btn-view">📄 Ver Recibo</a>` : ''}
+                        <button class="btn-confirm" onclick="confirmarFirma(${r.fila}, '${r.nombre}')">
+                            Activar reserva
+                        </button>
+                    </div>
+                `;
+                lista.appendChild(card);
+            });
+        } catch (e) {
+            loader.innerText = "❌ ERROR AL CARGAR DATOS.";
+        }
+    }
+
+    async function confirmarFirma(fila, nombre) {
+        if (!confirm(`¿Confirmas la activación de ${nombre}?`)) return;
+        const loader = document.getElementById('loader');
+        loader.style.display = "block";
+        loader.innerText = "PROCESANDO ACTIVACIÓN...";
+
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=confirmarFirma&fila=${fila}`);
+            const msg = await res.text();
+            alert(msg);
+            cargarReservas();
+        } catch (e) {
+            alert("❌ Error al activar cliente.");
+            loader.style.display = "none";
+        }
+    }
+
+    window.onload = cargarReservas;
+</script>
+</body>
+</html>
