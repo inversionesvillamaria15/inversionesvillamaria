@@ -214,13 +214,19 @@
     proyectos: {
       villa1:  { nombre: "Villa María 1", tipo: "Lote",
                  urlPagoAsesor: "https://script.google.com/macros/s/AKfycbxwRhqjJelMvDSNKSqEYpH1QcTy-0EtRPks0hYjcuWw1_ZkS4cHGR1aBqqV-CktKnc6/exec",
-                 urlPagoAdmin:  "https://script.google.com/macros/s/AKfycbxLZiJSsy2_LKkgBrgK0OxJhQhykTdjOiBfECXIzZkdq4m5JkSeY5_tJvbpLn9pWfHW/exec" },
+                 urlPagoAdmin:  "https://script.google.com/macros/s/AKfycbxLZiJSsy2_LKkgBrgK0OxJhQhykTdjOiBfECXIzZkdq4m5JkSeY5_tJvbpLn9pWfHW/exec",
+                 urlEstadoCuenta: "https://inversionesvillamaria15.github.io/estado-de-cuenta-villa-1/",
+                 urlControlMora:  "https://inversionesvillamaria15.github.io/control-de-mora-villa-1/" },
       villa2:  { nombre: "Villa María 2", tipo: "Lote",
                  urlPagoAsesor: "",
-                 urlPagoAdmin:  "" },
+                 urlPagoAdmin:  "",
+                 urlEstadoCuenta: "",
+                 urlControlMora:  "" },
       parcela: { nombre: "Parcelas",      tipo: "Parcela",
                  urlPagoAsesor: "",
-                 urlPagoAdmin:  "" }
+                 urlPagoAdmin:  "",
+                 urlEstadoCuenta: "",
+                 urlControlMora:  "" }
     }
   };
 
@@ -297,6 +303,16 @@
       titulo = "Aprobar pagos (Admin)";
       if (p.urlPagoAdmin) {
         src = 'pago_admin.html?url=' + encodeURIComponent(p.urlPagoAdmin);
+      }
+    } else if (clave === 'estadoCuenta') {
+      titulo = "Estados de cuenta";
+      if (p.urlEstadoCuenta) {
+        src = p.urlEstadoCuenta;
+      }
+    } else if (clave === 'clientesMora') {
+      titulo = "Clientes en mora";
+      if (p.urlControlMora) {
+        src = p.urlControlMora;
       }
     }
     // (los demás módulos se agregarán aquí igual)
