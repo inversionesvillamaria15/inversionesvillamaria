@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villa María - Dashboard financiero</title>
+    <link rel="stylesheet" href="style3.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <header class="header">
+            <div>
+                <h1>Control financiero de <span>Villa María 1</span></h1>
+                <p id="sync-status">Sincronizando datos...</p>
+            </div>
+            <button class="btn-refresh" onclick="fetchData()">Actualizar datos</button>
+        </header>
+
+        <main class="metrics-grid">
+            <div class="kpi-card danger">
+                <span class="kpi-label">Dinero sin cobrar (no incluye mora)</span>
+                <h2 id="val-mora">$0.00</h2>
+                <span id="txt-mora-count" class="kpi-subtext">0 clientes pendientes</span>
+            </div>
+
+            <div id="card-meta" class="kpi-card primary">
+                <span id="label-meta" class="kpi-label">Meta Mensual</span>
+                <h2 id="val-meta">$0.00</h2>
+                <span class="kpi-subtext">Basado en contratos activos</span>
+            </div>
+
+            <div class="kpi-card success">
+                <span class="kpi-label">Ingresado este Mes</span>
+                <h2 id="val-ingreso">$0.00</h2>
+                <div class="mini-bar"><div id="ingreso-fill" class="fill"></div></div>
+            </div>
+
+            <div class="kpi-card warning">
+                <span class="kpi-label">Brecha de Cobro</span>
+                <h2 id="val-brecha">$0.00</h2>
+                <span class="kpi-subtext">Faltante para el objetivo</span>
+            </div>
+
+            <div class="kpi-card health" id="health-trigger">
+                <span class="kpi-label">Salud del Proyecto</span>
+                <h2 id="val-salud">0%</h2>
+                <div class="health-container"><div id="health-fill" class="fill"></div></div>
+                <span class="kpi-subtext">Click para interpretar</span>
+            </div>
+        </main>
+
+        <section class="chart-container">
+            <canvas id="financialChart"></canvas>
+        </section>
+
+        <div id="health-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <h3>Interpretación de Salud</h3>
+                <hr>
+                <div id="modal-body"></div>
+                <p class="modal-footer">Este índice actúa como un semáforo de alerta temprana para la gestión de cobros.</p>
+            </div>
+        </div>
+    </div>
+    <script src="app3.js"></script>
+</body>
+</html>
