@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villa María - Dashboard financiero</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb; --success: #10b981; --warning: #f59e0b; 
+            --danger: #ef4444; --health: #8b5cf6; --bg: #f8fafc;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #1e293b; padding: 20px; margin: 0; }
+        .dashboard-wrapper { max-width: 1200px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.6rem; margin: 0; }
+        .header h1 span { color: var(--primary); }
+        .header p { font-size: 0.85rem; color: #64748b; margin: 5px 0 0; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .kpi-card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border-top: 5px solid #e2e8f0; transition: transform 0.2s; }
+        .kpi-label { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+        .kpi-card h2 { font-size: 1.8rem; margin: 10px 0; }
+        .kpi-subtext { font-size: 0.8rem; color: #94a3b8; }
+        .danger { border-color: var(--danger); } .danger h2 { color: var(--danger); }
+        .primary { border-color: var(--primary); } .primary h2 { color: var(--primary); }
+        .success { border-color: var(--success); } .success h2 { color: var(--success); }
+        .warning { border-color: var(--warning); } .warning h2 { color: #b45309; }
+        .health { border-color: var(--health); cursor: pointer; } .health h2 { color: var(--health); }
+        .health:hover { transform: translateY(-5px); background: #fdfaff; }
+        .special-alert { background: #fffbeb; border-color: #d97706 !important; animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
+            70% { transform: scale(1.01); box-shadow: 0 0 0 10px rgba(217, 119, 6, 0); }
+            100% { transform: scale(1); }
+        }
+        .mini-bar, .health-container { background: #e2e8f0; height: 6px; border-radius: 3px; margin-top: 10px; overflow: hidden; }
+        .fill { height: 100%; transition: width 1s ease-in-out; }
+        #ingreso-fill { background: var(--success); }
+        #health-fill { background: var(--health); }
+        .chart-container { background: white; margin-top: 30px; padding: 25px; border-radius: 20px; height: 350px; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; position: relative; animation: slideIn 0.3s; }
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #94a3b8; }
+        .status-desc { text-align: center; line-height: 1.5; }
+        .btn-refresh { padding: 10px 20px; border-radius: 10px; border: 1px solid #e2e8f0; background: white; cursor: pointer; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <header class="header">
+            <div>
+                <h1>Control financiero de <span id="titulo-proyecto">Villa María 1</span></h1>
+                <p id="sync-status">Sincronizando datos...</p>
+            </div>
+            <button class="btn-refresh" onclick="fetchData()">Actualizar datos</button>
+        </header>
+
+        <main class="metrics-grid">
+            <div class="kpi-card danger">
+                <span class="kpi-label">Dinero sin cobrar (no incluye mora)</span>
+                <h2 id="val-mora">$0.00</h2>
+                <span id="txt-mora-count" class="kpi-subtext">0 clientes pendientes</span>
+            </div>
+            <div id="card-meta" class="kpi-card primary">
+                <span id="label-meta" class="kpi-label">Meta Mensual</span>
+                <h2 id="val-meta">$0.00</h2>
+                <span class="kpi-subtext">Basado en contratos activos</span>
+            </div>
+            <div class="kpi-card success">
+                <span class="kpi-label">Ingresado este Mes</span>
+                <h2 id="val-ingreso">$0.00</h2>
+                <div class="mini-bar"><div id="ingreso-fill" class="fill"></div></div>
+            </div>
+            <div class="kpi-card warning">
+                <span class="kpi-label">Brecha de Cobro</span>
+                <h2 id="val-brecha">$0.00</h2>
+                <span class="kpi-subtext">Faltante para el objetivo</span>
+            </div>
+            <div class="kpi-card health" id="health-trigger">
+                <span class="kpi-label">Salud del Proyecto</span>
+                <h2 id="val-salud">0%</h2>
+                <div class="health-container"><div id="health-fill" class="fill"></div></div>
+                <span class="kpi-subtext">Click para interpretar</span>
+            </div>
+        </main>
+
+        <section class="chart-container">
+            <canvas id="financialChart"></canvas>
+        </section>
+
+        <div id="health-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <h3>Interpretación de Salud</h3>
+                <hr>
+                <div id="modal-body"></div>
+                <p class="modal-footer">Este índice actúa como un semáforo de alerta temprana para la gestión de cobros.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const URL_SCRIPT = params.get('url') || "https://script.google.com/macros/s/AKfycbxqOL-jfNz3XCoO_jSblSdGQhGbkV_V3GU473A3fdGafLWwZj2H2N9jEodbUqZobn0/exec";
+        if (params.get('proyecto')) document.getElementById('titulo-proyecto').innerText = params.get('proyecto');
+
+        let mainChart;
+        let saludActual = 0;
+
+        async function fetchData() {
+            const btn = document.querySelector('.btn-refresh');
+            btn.innerText = "Cargando...";
+            try {
+                const response = await fetch(URL_SCRIPT);
+                const json = await response.json();
+                const d = json.datos;
+
+                document.getElementById('val-mora').innerText = fmt(d.dineroEnMora);
+                document.getElementById('val-meta').innerText = fmt(d.metaMensual);
+                document.getElementById('val-ingreso').innerText = fmt(d.ingresosMesActual);
+                document.getElementById('val-brecha').innerText = fmt(d.brecha);
+                document.getElementById('val-salud').innerText = d.saludProyecto + "%";
+                document.getElementById('txt-mora-count').innerText = `${d.totalClientesMora} clientes en mora`;
+                document.getElementById('sync-status').innerText = `Sincronizado: ${json.actualizado}`;
+
+                saludActual = parseFloat(d.saludProyecto);
+
+                const pctIngreso = (d.ingresosMesActual / d.metaMensual) * 100;
+                document.getElementById('ingreso-fill').style.width = `${Math.min(pctIngreso, 100)}%`;
+                document.getElementById('health-fill').style.width = `${d.saludProyecto}%`;
+
+                const metaCard = document.getElementById('card-meta');
+                if (d.alertaPagoEspecial) {
+                    metaCard.classList.add('special-alert');
+                    document.getElementById('label-meta').innerText = "🔥 PAGO ESPECIAL DETECTADO";
+                } else {
+                    metaCard.classList.remove('special-alert');
+                    document.getElementById('label-meta').innerText = "META MENSUAL ESPERADA";
+                }
+
+                renderChart(d);
+            } catch (e) { console.error(e); } finally { btn.innerText = " Actualizar datos nuevamente"; }
+        }
+
+        function fmt(n) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n); }
+
+        function renderChart(d) {
+            const ctx = document.getElementById('financialChart').getContext('2d');
+            if (mainChart) mainChart.destroy();
+            mainChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mora', 'Meta', 'Ingreso', 'Brecha'],
+                    datasets: [{
+                        data: [d.dineroEnMora, d.metaMensual, d.ingresosMesActual, d.brecha],
+                        backgroundColor: ['#ef4444', '#2563eb', '#10b981', '#f59e0b'],
+                        borderRadius: 10
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        document.getElementById('health-trigger').onclick = function() {
+            const modal = document.getElementById('health-modal');
+            const body = document.getElementById('modal-body');
+            let content = "";
+            if (saludActual >= 90) {
+                content = `<div class="status-desc"><h1>🟢</h1><h2 style="color:#10b981">${saludActual}% - Excelente</h2><p>La comunidad es financieramente estable. Los ingresos son predecibles y el riesgo es casi nulo.</p></div>`;
+            } else if (saludActual >= 75) {
+                content = `<div class="status-desc"><h1>🟡</h1><h2 style="color:#f59e0b">${saludActual}% - Atención</h2><p>Un segmento empieza a fallar. Revisar métodos de pago o comunicación.</p></div>`;
+            } else {
+                content = `<div class="status-desc"><h1>🔴</h1><h2 style="color:#ef4444">${saludActual}% - Crítico</h2><p>Alerta roja: en el 75% uno de cada cuatro no paga. Se necesitan medidas legales urgentes.</p></div>`;
+            }
+            body.innerHTML = content;
+            modal.style.display = "block";
+        };
+
+        function closeModal() { document.getElementById('health-modal').style.display = "none"; }
+        window.onclick = function(e) { if(e.target == document.getElementById('health-modal')) closeModal(); }
+        window.onload = fetchData;
+    </script>
+</body>
+</html>
