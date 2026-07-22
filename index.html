@@ -6,74 +6,33 @@
 <title>Villa María · Sistema Integral</title>
 <style>
   :root {
-    --verde-monte: #1e4633;
-    --verde-hoja: #2e6b4a;
-    --papel: #f7f5ef;
-    --tinta: #22251f;
-    --arena: #e4dfd2;
-    --oro: #b98a2f;
-    --rojo: #a4342b;
-    --blanco: #ffffff;
-    --gris-suave: #8aa595;
+    --verde-monte: #1e4633; --verde-hoja: #2e6b4a; --papel: #f7f5ef;
+    --tinta: #22251f; --arena: #e4dfd2; --oro: #b98a2f; --rojo: #a4342b;
+    --blanco: #ffffff; --gris-suave: #8aa595;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: Georgia, 'Times New Roman', serif;
-    background: var(--papel);
-    color: var(--tinta);
-    min-height: 100vh;
-  }
-  header {
-    background: var(--verde-monte);
-    color: var(--papel);
-    padding: 22px 20px;
-    text-align: center;
-    border-bottom: 4px double var(--oro);
-    position: relative;
-  }
+  body { font-family: Georgia, 'Times New Roman', serif; background: var(--papel); color: var(--tinta); min-height: 100vh; }
+  header { background: var(--verde-monte); color: var(--papel); padding: 22px 20px; text-align: center; border-bottom: 4px double var(--oro); position: relative; }
   header .marca { font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--oro); font-family: Arial, sans-serif; }
   header h1 { font-size: 26px; font-weight: normal; margin-top: 4px; }
-  header .sesion {
-    position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
-    font-family: Arial, sans-serif; font-size: 12px; text-align: right; color: var(--papel);
-  }
+  header .sesion { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-family: Arial, sans-serif; font-size: 12px; text-align: right; color: var(--papel); }
   main { max-width: 620px; margin: 0 auto; padding: 30px 20px 60px; }
   .pantalla { display: none; }
   .pantalla.activa { display: block; }
-  .tarjeta {
-    background: var(--blanco); border: 1px solid var(--arena);
-    border-top: 5px solid var(--verde-monte);
-    box-shadow: 0 2px 14px rgba(30,70,51,0.08); padding: 28px 26px; margin-bottom: 18px;
-  }
+  .tarjeta { background: var(--blanco); border: 1px solid var(--arena); border-top: 5px solid var(--verde-monte); box-shadow: 0 2px 14px rgba(30,70,51,0.08); padding: 28px 26px; margin-bottom: 18px; }
   .tarjeta h2 { font-size: 20px; font-weight: normal; margin-bottom: 4px; }
   .tarjeta p.sub { font-family: Arial, sans-serif; font-size: 13px; color: #6b6f66; margin-bottom: 22px; }
   label { display: block; font-family: Arial, sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--verde-hoja); margin-bottom: 6px; }
-  select {
-    width: 100%; padding: 12px 14px; font-size: 16px; font-family: Georgia, serif;
-    border: 1px solid var(--arena); background: var(--papel); margin-bottom: 16px;
-  }
+  select { width: 100%; padding: 12px 14px; font-size: 16px; font-family: Georgia, serif; border: 1px solid var(--arena); background: var(--papel); margin-bottom: 16px; }
   select:focus { outline: 2px solid var(--verde-hoja); outline-offset: -1px; background: var(--blanco); }
-  .btn {
-    width: 100%; padding: 14px; font-size: 15px; font-family: Arial, sans-serif;
-    font-weight: bold; letter-spacing: 0.5px; color: var(--papel);
-    background: var(--verde-monte); border: none; cursor: pointer;
-  }
+  .btn { width: 100%; padding: 14px; font-size: 15px; font-family: Arial, sans-serif; font-weight: bold; letter-spacing: 0.5px; color: var(--papel); background: var(--verde-monte); border: none; cursor: pointer; }
   .btn:hover:not(:disabled) { background: var(--verde-hoja); }
   .selector-proyecto { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  .proyecto-btn {
-    text-align: left; background: var(--blanco); border: 1px solid var(--arena);
-    border-left: 5px solid var(--oro); padding: 18px 20px; cursor: pointer;
-    font-family: Georgia, serif; font-size: 18px; transition: all 0.15s;
-  }
+  .proyecto-btn { text-align: left; background: var(--blanco); border: 1px solid var(--arena); border-left: 5px solid var(--oro); padding: 18px 20px; cursor: pointer; font-family: Georgia, serif; font-size: 18px; transition: all 0.15s; }
   .proyecto-btn:hover { border-left-color: var(--verde-monte); background: #f0f5f1; }
   .proyecto-btn small { display: block; font-family: Arial, sans-serif; font-size: 12px; color: #6b6f66; margin-top: 4px; }
   .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .menu-item {
-    text-align: center; background: var(--blanco); border: 1px solid var(--arena);
-    border-top: 4px solid var(--verde-monte); padding: 22px 14px; cursor: pointer;
-    font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: var(--tinta);
-    transition: all 0.15s;
-  }
+  .menu-item { text-align: center; background: var(--blanco); border: 1px solid var(--arena); border-top: 4px solid var(--verde-monte); padding: 22px 14px; cursor: pointer; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: var(--tinta); transition: all 0.15s; }
   .menu-item:hover { background: #f0f5f1; border-top-color: var(--oro); }
   .menu-item .ico { font-size: 26px; display: block; margin-bottom: 8px; }
   .botones-abajo { display: flex; gap: 12px; margin-top: 18px; }
@@ -82,11 +41,7 @@
   .volver { background: transparent; border: none; color: var(--verde-hoja); font-family: Arial, sans-serif; font-size: 13px; cursor: pointer; margin-bottom: 14px; padding: 4px 0; }
   .badge-proyecto { display: inline-block; background: var(--oro); color: var(--blanco); font-family: Arial, sans-serif; font-size: 11px; padding: 3px 10px; border-radius: 4px; margin-bottom: 16px; letter-spacing: 1px; }
   .sub-opciones { display: grid; grid-template-columns: 1fr; gap: 14px; }
-  .sub-opcion {
-    text-align: left; background: var(--blanco); border: 1px solid var(--arena);
-    border-left: 5px solid var(--verde-monte); padding: 20px 22px; cursor: pointer;
-    font-family: Georgia, serif; font-size: 18px; transition: all 0.15s;
-  }
+  .sub-opcion { text-align: left; background: var(--blanco); border: 1px solid var(--arena); border-left: 5px solid var(--verde-monte); padding: 20px 22px; cursor: pointer; font-family: Georgia, serif; font-size: 18px; transition: all 0.15s; }
   .sub-opcion:hover { border-left-color: var(--oro); background: #f0f5f1; }
   .sub-opcion small { display: block; font-family: Arial, sans-serif; font-size: 12px; color: #6b6f66; margin-top: 4px; }
   .sub-opcion .ico { font-size: 22px; margin-right: 8px; }
@@ -99,13 +54,10 @@
 <header>
   <div class="marca">Inversiones</div>
   <h1>Villa María</h1>
-  <div class="sesion" id="sesionInfo" style="display:none;">
-    <span id="sesionNombre"></span>
-  </div>
+  <div class="sesion" id="sesionInfo" style="display:none;"><span id="sesionNombre"></span></div>
 </header>
 
 <main>
-  <!-- PANTALLA 1: SELECCIÓN DE ASESOR -->
   <section class="pantalla activa" id="pantallaLogin">
     <div class="tarjeta">
       <h2>Bienvenido</h2>
@@ -116,26 +68,18 @@
     </div>
   </section>
 
-  <!-- PANTALLA 2: SELECTOR DE PROYECTO -->
   <section class="pantalla" id="pantallaProyecto">
     <div class="tarjeta">
       <h2>Selecciona el proyecto</h2>
       <p class="sub">¿En qué proyecto vas a trabajar?</p>
       <div class="selector-proyecto">
-        <button class="proyecto-btn" onclick="elegirProyecto('villa1')">
-          Villa María 1 <small>Lotes · Proyecto principal</small>
-        </button>
-        <button class="proyecto-btn" onclick="elegirProyecto('villa2')">
-          Villa María 2 <small>Lotes · Segunda etapa</small>
-        </button>
-        <button class="proyecto-btn" onclick="elegirProyecto('parcela')">
-          Parcelas <small>Terrenos grandes</small>
-        </button>
+        <button class="proyecto-btn" onclick="elegirProyecto('villa1')">Villa María 1 <small>Lotes · Proyecto principal</small></button>
+        <button class="proyecto-btn" onclick="elegirProyecto('villa2')">Villa María 2 <small>Lotes · Segunda etapa</small></button>
+        <button class="proyecto-btn" onclick="elegirProyecto('parcela')">Parcelas <small>Terrenos grandes</small></button>
       </div>
     </div>
   </section>
 
-  <!-- PANTALLA 3: MENÚ PRINCIPAL -->
   <section class="pantalla" id="pantallaMenu">
     <div class="tarjeta">
       <span class="badge-proyecto" id="badgeProyecto"></span>
@@ -146,6 +90,7 @@
         <div class="menu-item" onclick="mostrarPantalla('submenuReserva')"><span class="ico">➕</span>Registrar reserva</div>
         <div class="menu-item" onclick="mostrarPantalla('submenuPago')"><span class="ico">💵</span>Registrar pago</div>
         <div class="menu-item" onclick="abrirModulo('estadoCuenta')"><span class="ico">📄</span>Estados de cuenta</div>
+        <div class="menu-item" onclick="abrirModulo('controlMora')"><span class="ico">⚠️</span>Control de mora</div>
         <div class="menu-item" onclick="abrirModulo('dashboard')"><span class="ico">📈</span>Estadísticas financieras</div>
       </div>
       <div class="botones-abajo">
@@ -155,7 +100,6 @@
     </div>
   </section>
 
-  <!-- SUBMENÚ: REGISTRAR RESERVA -->
   <section class="pantalla" id="submenuReserva">
     <button class="volver" onclick="mostrarPantalla('pantallaMenu')">← Volver al menú</button>
     <div class="tarjeta">
@@ -163,17 +107,12 @@
       <h2 style="margin-bottom:6px;">Registrar reserva</h2>
       <p class="sub">Elige una opción.</p>
       <div class="sub-opciones">
-        <button class="sub-opcion" onclick="abrirModulo('agregarReserva')">
-          <span class="ico">➕</span>Agregar reserva <small>Registrar un nuevo cliente y su reserva.</small>
-        </button>
-        <button class="sub-opcion" onclick="abrirModulo('administrarReserva')">
-          <span class="ico">🔑</span>Administrar reserva <small>Ver y activar reservas pendientes.</small>
-        </button>
+        <button class="sub-opcion" onclick="abrirModulo('agregarReserva')"><span class="ico">➕</span>Agregar reserva <small>Registrar un nuevo cliente y su reserva.</small></button>
+        <button class="sub-opcion" onclick="abrirModulo('administrarReserva')"><span class="ico">🔑</span>Administrar reserva <small>Ver y activar reservas pendientes.</small></button>
       </div>
     </div>
   </section>
 
-  <!-- SUBMENÚ: REGISTRAR PAGO -->
   <section class="pantalla" id="submenuPago">
     <button class="volver" onclick="mostrarPantalla('pantallaMenu')">← Volver al menú</button>
     <div class="tarjeta">
@@ -181,17 +120,12 @@
       <h2 style="margin-bottom:6px;">Registrar pago</h2>
       <p class="sub">¿Cómo deseas entrar?</p>
       <div class="sub-opciones">
-        <button class="sub-opcion" onclick="abrirModulo('pagoAdmin')">
-          <span class="ico">🛡️</span>Entrar como admin <small>Revisar y aprobar pagos.</small>
-        </button>
-        <button class="sub-opcion" onclick="abrirModulo('pagoAsesor')">
-          <span class="ico">📝</span>Entrar como asesor <small>Reportar un pago para revisión.</small>
-        </button>
+        <button class="sub-opcion" onclick="abrirModulo('pagoAdmin')"><span class="ico">🛡️</span>Entrar como admin <small>Revisar y aprobar pagos.</small></button>
+        <button class="sub-opcion" onclick="abrirModulo('pagoAsesor')"><span class="ico">📝</span>Entrar como asesor <small>Reportar un pago para revisión.</small></button>
       </div>
     </div>
   </section>
 
-  <!-- PANTALLA DE MÓDULO -->
   <section class="pantalla" id="pantallaModulo">
     <button class="volver" id="btnVolverModulo" onclick="volverDeModulo()">← Volver</button>
     <div id="moduloContenedor"></div>
@@ -201,7 +135,6 @@
 <footer>Sistema Integral Villa María · 2026</footer>
 
 <script>
-  // ================== CONFIGURACIÓN CENTRAL ==================
   const CONFIG = {
     asesores: [
       { nombre: "Eduardo Torres",  rol: "asesor" },
@@ -216,45 +149,37 @@
                  urlPagoAsesor: "https://script.google.com/macros/s/AKfycbxwRhqjJelMvDSNKSqEYpH1QcTy-0EtRPks0hYjcuWw1_ZkS4cHGR1aBqqV-CktKnc6/exec",
                  urlPagoAdmin:  "https://script.google.com/macros/s/AKfycbxLZiJSsy2_LKkgBrgK0OxJhQhykTdjOiBfECXIzZkdq4m5JkSeY5_tJvbpLn9pWfHW/exec",
                  urlEstadoCuenta: "https://inversionesvillamaria15.github.io/estado-de-cuenta-villa-1/",
-                 urlControlMora:  "https://inversionesvillamaria15.github.io/control-de-mora-villa-1/" },
+                 urlControlMora:  "https://inversionesvillamaria15.github.io/control-de-mora-villa-1/",
+                 urlListaClientes: "https://inversionesvillamaria15.github.io/lista-clientes-villa-1/",
+                 urlAgregarReserva: "https://script.google.com/macros/s/AKfycbzj1xEY_4Ma3gJtPrwDPJvmUtRM9Pi5VTf3CMVfmtc7veb755O9JxfwNmEershMzgGu/exec",
+                 urlAdminReserva: "https://script.google.com/macros/s/AKfycbzj1xEY_4Ma3gJtPrwDPJvmUtRM9Pi5VTf3CMVfmtc7veb755O9JxfwNmEershMzgGu/exec",
+                 urlDashboard: "https://script.google.com/macros/s/AKfycbxqOL-jfNz3XCoO_jSblSdGQhGbkV_V3GU473A3fdGafLWwZj2H2N9jEodbUqZobn0/exec" },
       villa2:  { nombre: "Villa María 2", tipo: "Lote",
-                 urlPagoAsesor: "",
-                 urlPagoAdmin:  "",
-                 urlEstadoCuenta: "",
-                 urlControlMora:  "" },
-      parcela: { nombre: "Parcelas",      tipo: "Parcela",
-                 urlPagoAsesor: "",
-                 urlPagoAdmin:  "",
-                 urlEstadoCuenta: "",
-                 urlControlMora:  "" }
+                 urlPagoAsesor: "", urlPagoAdmin: "", urlEstadoCuenta: "", urlControlMora: "", urlListaClientes: "", urlAgregarReserva: "", urlAdminReserva: "", urlDashboard: "" },
+      parcela: { nombre: "Parcelas", tipo: "Parcela",
+                 urlPagoAsesor: "", urlPagoAdmin: "", urlEstadoCuenta: "", urlControlMora: "", urlListaClientes: "", urlAgregarReserva: "", urlAdminReserva: "", urlDashboard: "" }
     }
   };
 
-  // ================== ESTADO DE SESIÓN ==================
   let sesion = { nombre: null, rol: null, proyecto: null };
   let pantallaAnterior = 'pantallaMenu';
 
-  // ================== NAVEGACIÓN ==================
   function mostrarPantalla(id) {
     document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
     document.getElementById(id).classList.add('activa');
     window.scrollTo(0, 0);
   }
 
-  // ================== CARGAR ASESORES ==================
   function cargarAsesores() {
     const sel = document.getElementById('selAsesor');
     sel.innerHTML = '<option value="">Selecciona…</option>';
     CONFIG.asesores.forEach(a => {
       const opt = document.createElement('option');
-      opt.value = a.nombre;
-      opt.textContent = a.nombre;
-      opt.dataset.rol = a.rol;
+      opt.value = a.nombre; opt.textContent = a.nombre; opt.dataset.rol = a.rol;
       sel.appendChild(opt);
     });
   }
 
-  // ================== ENTRAR ==================
   function entrar() {
     const sel = document.getElementById('selAsesor');
     const nombre = sel.value;
@@ -272,7 +197,6 @@
     mostrarPantalla('pantallaLogin');
   }
 
-  // ================== PROYECTO ==================
   function elegirProyecto(clave) {
     sesion.proyecto = clave;
     const p = CONFIG.proyectos[clave];
@@ -284,7 +208,6 @@
     mostrarPantalla('pantallaMenu');
   }
 
-  // ================== ABRIR MÓDULO ==================
   function abrirModulo(clave) {
     const activa = document.querySelector('.pantalla.activa');
     pantallaAnterior = activa ? activa.id : 'pantallaMenu';
@@ -296,26 +219,35 @@
 
     if (clave === 'pagoAsesor') {
       titulo = "Registrar pago (Asesor)";
-      if (p.urlPagoAsesor) {
-        src = 'pago_asesor.html?asesor=' + encodeURIComponent(sesion.nombre) + '&url=' + encodeURIComponent(p.urlPagoAsesor);
-      }
+      if (p.urlPagoAsesor) src = 'pago_asesor.html?asesor=' + encodeURIComponent(sesion.nombre) + '&url=' + encodeURIComponent(p.urlPagoAsesor);
     } else if (clave === 'pagoAdmin') {
       titulo = "Aprobar pagos (Admin)";
-      if (p.urlPagoAdmin) {
-        src = 'pago_admin.html?url=' + encodeURIComponent(p.urlPagoAdmin);
-      }
+      if (p.urlPagoAdmin) src = 'pago_admin.html?url=' + encodeURIComponent(p.urlPagoAdmin);
     } else if (clave === 'estadoCuenta') {
       titulo = "Estados de cuenta";
-      if (p.urlEstadoCuenta) {
-        src = p.urlEstadoCuenta;
-      }
+      if (p.urlEstadoCuenta) src = p.urlEstadoCuenta;
+    } else if (clave === 'controlMora') {
+      titulo = "Control de mora";
+      if (p.urlControlMora) src = p.urlControlMora;
     } else if (clave === 'clientesMora') {
       titulo = "Clientes en mora";
-      if (p.urlControlMora) {
-        src = p.urlControlMora;
+      if (p.urlListaClientes) src = p.urlListaClientes;
+    } else if (clave === 'perfilesCliente') {
+      titulo = "Ver perfiles de cliente";
+      if (p.urlListaClientes) {
+        const sep = p.urlListaClientes.includes('?') ? '&' : '?';
+        src = p.urlListaClientes + sep + 'vista=general';
       }
+    } else if (clave === 'agregarReserva') {
+      titulo = "Agregar reserva";
+      if (p.urlAgregarReserva) src = 'agregar_reserva.html?asesor=' + encodeURIComponent(sesion.nombre) + '&url=' + encodeURIComponent(p.urlAgregarReserva);
+    } else if (clave === 'administrarReserva') {
+      titulo = "Administrar reserva";
+      if (p.urlAdminReserva) src = 'admin_reserva.html?url=' + encodeURIComponent(p.urlAdminReserva);
+    } else if (clave === 'dashboard') {
+      titulo = "Estadísticas financieras";
+      if (p.urlDashboard) src = 'estadisticas.html?url=' + encodeURIComponent(p.urlDashboard) + '&proyecto=' + encodeURIComponent(p.nombre);
     }
-    // (los demás módulos se agregarán aquí igual)
 
     if (!src) {
       contenedor.innerHTML = `
@@ -334,9 +266,7 @@
     mostrarPantalla('pantallaModulo');
   }
 
-  function volverDeModulo() {
-    mostrarPantalla(pantallaAnterior);
-  }
+  function volverDeModulo() { mostrarPantalla(pantallaAnterior); }
 
   cargarAsesores();
 </script>
